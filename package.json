@@ -1,0 +1,46 @@
+{
+  "name": "iam-quick-uos-server-api",
+  "version": "0.1.0",
+  "description": "Unity Online Service Server API",
+  "author": {
+    "name": "dualface",
+    "email": "dualface@gmail.com",
+    "url": "https://github.com/dualface/"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dualface/iam-quick-uos-server-api"
+  },
+  "homepage": "https://github.com/dualface/iam-quick-uos-server-api",
+  "keywords": [
+    "unity",
+    "uos"
+  ],
+  "scripts": {
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/chai": "^4.3.17",
+    "@types/node": "20.12.7",
+    "chai": "^5.1.1",
+    "gts": "^5.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "axios": "^1.7.3"
+  }
+}
