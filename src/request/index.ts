@@ -1,19 +1,18 @@
 import axios from 'axios';
+import {Result} from '../result';
 
-export const UosRemoteConfigEndpoint = 'https://c.unity.cn';
-
-let _uosCredentials = '';
+let credentials = '';
 
 // create base64 encoded credentials for UOS Server API
-const uosApiCredentials = () => {
-  if (_uosCredentials === '') {
+function apiCredentials() {
+  if (credentials === '') {
     const {UOS_APP_ID, UOS_APP_SERVICE_SECRET} = process.env;
 
     if (
       typeof UOS_APP_ID === 'string' &&
       typeof UOS_APP_SERVICE_SECRET === 'string'
     ) {
-      _uosCredentials = Buffer.from(
+      credentials = Buffer.from(
         `${UOS_APP_ID}:${UOS_APP_SERVICE_SECRET}`
       ).toString('base64');
     } else {
@@ -23,46 +22,53 @@ const uosApiCredentials = () => {
     }
   }
 
-  return _uosCredentials;
-};
+  return credentials;
+}
 
-// define the UOS Server API error
-export interface UosApiError {
+// UOS API 返回的错误
+export interface ApiError {
   code?: string;
   message?: string;
 }
 
-// define the UOS Server API response
-export interface UosApiResponse extends UosApiError {
+// UOS API 返回的响应结构
+export interface ApiResponse extends ApiError {
   [keyof: string]: unknown;
 }
 
 // check if the response is an UOS Server API error
-export function uosIsApiError(resp: unknown): resp is UosApiError {
-  return typeof resp === 'object' && (resp as UosApiError).code !== undefined;
+export function isApiError(resp: unknown): resp is ApiError {
+  return typeof resp === 'object' && (resp as ApiError).code !== undefined;
 }
 
-// define the UOS Server API request method
-export enum UosApiRequestMethod {
+// 从 ApiError 创建 Result
+export function makeErrResult(err: ApiError): Result {
+  return {
+    ok: false,
+    error: `${err.code}: ${err.message}`,
+  };
+}
+
+export enum RequestMethod {
   Get = 'get',
   Post = 'post',
   Put = 'put',
   Delete = 'delete',
 }
 
-// perform a UOS Server API request
-export const uosApiRequest = async (
+// 执行 UOS API 请求
+export async function apiRequest(
   url: string,
-  method: UosApiRequestMethod,
+  method: RequestMethod,
   data?: object,
   timeout?: number
-): Promise<UosApiResponse> => {
+): Promise<ApiResponse> {
   try {
     const resp = await axios({
       method,
       url,
       headers: {
-        Authorization: `Basic ${uosApiCredentials()}`,
+        Authorization: `Basic ${apiCredentials()}`,
         'Content-Type': 'application/json',
       },
       timeout: timeout ?? 1000,
@@ -96,4 +102,4 @@ export const uosApiRequest = async (
       };
     }
   }
-};
+}
